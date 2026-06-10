@@ -68,6 +68,12 @@ export const api = {
   integrations: {
     status: () => request('/integrations/status'),
   },
+  ai: {
+    getProviders: () => request('/ai/providers'),
+    setProvider: (provider) =>
+      request('/ai/provider', { method: 'POST', body: JSON.stringify({ provider }) }),
+    chat: (body) => request('/ai/chat', { method: 'POST', body: JSON.stringify(body) }),
+  },
   memory: {
     list: (params = '') => request(`/memory${params}`),
     stats: () => request('/memory/stats'),

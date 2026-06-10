@@ -9,6 +9,7 @@ import agentRoutes from './agents.js';
 import dashboardRoutes from './dashboard.js';
 import integrationRoutes from './integrations.js';
 import memoryRoutes from './memory.js';
+import aiRoutes from './ai.js';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/activities', activityRoutes);
 router.use('/agents', agentRoutes);
 router.use('/integrations', integrationRoutes);
 router.use('/memory', memoryRoutes);
+router.use('/ai', aiRoutes);
 
 export default router;

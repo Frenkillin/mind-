@@ -7,8 +7,10 @@ import Idea from '../models/Idea.js';
 import Activity from '../models/Activity.js';
 import AgentSession from '../models/AgentSession.js';
 import { MIND_MODULES, getModuleStats } from '../config/modules.js';
+import { geminiService } from './integrations/gemini.js';
 import { claudeService } from './integrations/claude.js';
 import { openaiService } from './integrations/openai.js';
+import { getAiStatus } from './ai/aiProviderManager.js';
 import { githubService } from './integrations/github.js';
 import { replitService } from './integrations/replit.js';
 import { env } from '../config/env.js';
@@ -101,7 +103,10 @@ export async function buildDashboardPayload() {
     Activity.countDocuments({ createdAt: { $gte: startOfDay } }),
   ]);
 
+  const aiStatus = await getAiStatus();
+
   const integrations = {
+    gemini: geminiService.isConfigured(),
     claude: claudeService.isConfigured(),
     openai: openaiService.isConfigured(),
     github: githubService.isConfigured(),
@@ -110,7 +115,7 @@ export async function buildDashboardPayload() {
     database: mongoose.connection.readyState === 1,
   };
 
-  const aiReady = integrations.claude || integrations.openai;
+  const aiReady = aiStatus.aiReady;
 
   return {
     meta: {
@@ -123,6 +128,8 @@ export async function buildDashboardPayload() {
       modules: MIND_MODULES,
       moduleStats: getModuleStats(),
       aiReady,
+      activeAiProvider: aiStatus.activeProvider,
+      defaultAiProvider: aiStatus.defaultProvider,
     },
     stats: {
       activeProjects: activeProjectsCount,

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Check, X, Mic } from 'lucide-react';
 import { api } from '../services/api';
+import AIProviderSelector from '../components/settings/AIProviderSelector';
 import '../styles/shared.css';
 import './Settings.css';
 
 const integrations = [
-  { key: 'claude', name: 'Claude (Anthropic)', env: 'ANTHROPIC_API_KEY', description: 'AI conversazionale avanzata' },
-  { key: 'openai', name: 'OpenAI', env: 'OPENAI_API_KEY', description: 'GPT-4o e modelli OpenAI' },
+  { key: 'gemini', name: 'Google Gemini', env: 'GEMINI_API_KEY', description: 'Provider AI predefinito' },
+  { key: 'claude', name: 'Claude (Anthropic)', env: 'ANTHROPIC_API_KEY', description: 'Provider alternativo' },
+  { key: 'openai', name: 'OpenAI', env: 'OPENAI_API_KEY', description: 'Opzionale — richiede OPENAI_ENABLED=true' },
   { key: 'github', name: 'GitHub', env: 'GITHUB_TOKEN', description: 'Integrazione repository e codice' },
   { key: 'replit', name: 'Replit', env: 'REPLIT_API_KEY', description: 'Deploy e sviluppo cloud' },
   { key: 'voice', name: 'Controllo vocale', env: 'VOICE_ENABLED', description: 'Comandi vocali e speech-to-text' },
@@ -14,10 +16,17 @@ const integrations = [
 
 export default function Settings() {
   const [status, setStatus] = useState({});
+  const [aiData, setAiData] = useState(null);
 
   useEffect(() => {
-    api.integrations.status()
-      .then((res) => setStatus(res.data))
+    Promise.all([
+      api.integrations.status(),
+      api.ai.getProviders(),
+    ])
+      .then(([statusRes, aiRes]) => {
+        setStatus(statusRes.data);
+        setAiData(aiRes.data);
+      })
       .catch(console.error);
   }, []);
 
@@ -25,18 +34,31 @@ export default function Settings() {
     <div className="page">
       <div className="page-header">
         <h1>Impostazioni</h1>
-        <p>Configura integrazioni e preferenze di MIND</p>
+        <p>Configura provider AI, integrazioni e preferenze di MIND</p>
       </div>
 
+      {aiData && (
+        <AIProviderSelector
+          initialData={aiData}
+          onUpdate={(data) => {
+            setAiData((prev) => ({ ...prev, ...data }));
+            setStatus((prev) => ({ ...prev, activeAiProvider: data.activeProvider }));
+          }}
+        />
+      )}
+
       <section className="settings-section card">
-        <h3 className="settings-title">Integrazioni</h3>
+        <h3 className="settings-title">Stato integrazioni</h3>
         <p className="settings-desc">
           Configura le chiavi API nel file <code>server/.env</code> per attivare le integrazioni.
         </p>
 
         <div className="integrations-list">
           {integrations.map((item) => {
-            const isActive = status[item.key];
+            let isActive = status[item.key];
+            if (item.key === 'openai') {
+              isActive = status.openai && status.openaiEnabled;
+            }
             return (
               <div key={item.key} className="integration-item">
                 <div className="integration-info">
@@ -46,7 +68,7 @@ export default function Settings() {
                 </div>
                 <div className={`integration-status ${isActive ? 'active' : 'inactive'}`}>
                   {isActive ? <Check size={16} /> : <X size={16} />}
-                  {isActive ? 'Attivo' : 'Non configurato'}
+                  {isActive ? 'Attivo' : item.key === 'openai' && status.openai && !status.openaiEnabled ? 'Disattivato' : 'Non configurato'}
                 </div>
               </div>
             );
@@ -77,6 +99,10 @@ export default function Settings() {
           <div className="info-row">
             <span>Versione</span>
             <span>1.0.0</span>
+          </div>
+          <div className="info-row">
+            <span>Provider AI attivo</span>
+            <span>{status.activeAiProvider || 'gemini'}</span>
           </div>
           <div className="info-row">
             <span>Backend</span>

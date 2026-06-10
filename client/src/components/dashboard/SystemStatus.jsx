@@ -3,6 +3,7 @@ import './SystemStatus.css';
 
 const integrationConfig = [
   { key: 'database', label: 'MongoDB', icon: Database },
+  { key: 'gemini', label: 'Gemini', icon: Bot },
   { key: 'claude', label: 'Claude', icon: Bot },
   { key: 'openai', label: 'OpenAI', icon: Bot },
   { key: 'github', label: 'GitHub', icon: Github },
@@ -24,6 +25,9 @@ export default function SystemStatus({ system }) {
           <span className="system-ai-label">Motore AI</span>
           <span className={`system-ai-value ${system?.aiReady ? 'ready' : 'pending'}`}>
             {system?.aiReady ? 'Configurato' : 'Non configurato'}
+          </span>
+          <span className="system-ai-provider">
+            Provider: {system?.activeAiProvider || 'gemini'} (default: gemini)
           </span>
         </div>
       </div>

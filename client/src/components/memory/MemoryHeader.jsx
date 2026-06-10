@@ -10,7 +10,7 @@ export default function MemoryHeader({ onCreate, onSync, syncing }) {
           Modulo 2
         </div>
         <h1>Memoria Permanente</h1>
-        <p>Archivio semantico unificato — pronto per OpenAI, Claude e MCP</p>
+        <p>Archivio semantico unificato — powered by Gemini, Claude, OpenAI e MCP</p>
       </div>
       <div className="memory-header-actions">
         <button className="btn btn-ghost" onClick={onSync} disabled={syncing}>

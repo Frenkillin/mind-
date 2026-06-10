@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export const MEMORY_TYPES = ['conversation', 'project', 'idea', 'document', 'contact'];
 export const MEMORY_SOURCES = ['manual', 'agent', 'sync', 'import', 'mcp'];
-export const MEMORY_PROVIDERS = ['mind', 'openai', 'claude', 'mcp'];
+export const MEMORY_PROVIDERS = ['mind', 'gemini', 'claude', 'openai', 'mcp'];
 
 const refsSchema = new mongoose.Schema(
   {

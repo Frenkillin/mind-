@@ -2,7 +2,11 @@ import { env } from '../../config/env.js';
 
 class OpenAIService {
   isConfigured() {
-    return Boolean(env.openaiApiKey);
+    return env.openaiEnabled && Boolean(env.openaiApiKey);
+  }
+
+  isEnabled() {
+    return env.openaiEnabled;
   }
 
   async chat(messages, system = '') {

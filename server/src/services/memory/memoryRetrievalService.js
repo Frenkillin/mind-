@@ -1,9 +1,12 @@
 import Memory, { MEMORY_TYPES } from '../../models/Memory.js';
+import { formatForGemini } from './adapters/geminiMemoryAdapter.js';
 import { formatForClaude } from './adapters/claudeMemoryAdapter.js';
 import { formatForOpenAI } from './adapters/openaiMemoryAdapter.js';
 import { getMcpToolDefinitions } from './adapters/mcpMemoryAdapter.js';
+import { geminiService } from '../integrations/gemini.js';
 import { claudeService } from '../integrations/claude.js';
 import { openaiService } from '../integrations/openai.js';
+import { getActiveProvider } from '../ai/aiProviderManager.js';
 
 function estimateTokens(text) {
   return Math.ceil((text || '').length / 4);
@@ -50,19 +53,27 @@ export async function buildContext(options = {}) {
   ].join('\n');
 
   const tokenEstimate = estimateTokens(systemContext);
+  const activeProvider = await getActiveProvider();
 
   return {
     systemContext,
     memories: memoryBlocks,
     tokenEstimate,
+    activeProvider,
     providers: {
-      openai: {
-        ready: openaiService.isConfigured(),
-        formatted: formatForOpenAI(memoryBlocks),
+      gemini: {
+        ready: geminiService.isConfigured(),
+        isDefault: true,
+        formatted: formatForGemini(memoryBlocks),
       },
       claude: {
         ready: claudeService.isConfigured(),
         formatted: formatForClaude(memoryBlocks),
+      },
+      openai: {
+        ready: openaiService.isConfigured(),
+        enabled: openaiService.isEnabled(),
+        formatted: formatForOpenAI(memoryBlocks),
       },
       mcp: {
         ready: false,

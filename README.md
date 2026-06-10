@@ -16,7 +16,8 @@ MIND è un sistema modulare che combina:
 - **Dashboard intelligente** — panoramica progetti, attività, obiettivi e note rapide
 - **Memoria persistente** — salvataggio progetti, idee e cronologia attività su MongoDB
 - **Sistema agenti AI** — Business, Development, Marketing e Research Agent
-- **Integrazioni pronte** — Claude, OpenAI, GitHub, Replit e controllo vocale
+- **Provider AI multi-modello** — Google Gemini (default), Claude, OpenAI (opzionale)
+- **Integrazioni pronte** — GitHub, Replit, controllo vocale e MCP
 
 ## Architettura
 
@@ -35,7 +36,8 @@ mind/
 │       ├── routes/         # API routes
 │       ├── services/
 │       │   ├── agents/     # AI agent system
-│       │   └── integrations/  # Claude, OpenAI, GitHub, Replit, Voice
+│       │   ├── ai/         # AI Provider Manager
+│       │   └── integrations/  # Gemini, Claude, OpenAI, GitHub, Replit, Voice
 │       └── middleware/
 ├── docker-compose.yml      # MongoDB container
 └── package.json            # Root scripts
@@ -69,9 +71,12 @@ Modifica `server/.env` con le tue credenziali:
 PORT=5000
 MONGODB_URI=mongodb://mind:mind_secret@localhost:27017/mind?authSource=admin
 
-# Opzionale — attiva le integrazioni AI
-ANTHROPIC_API_KEY=sk-ant-...
-OPENAI_API_KEY=sk-...
+# AI Providers — Gemini è il default
+GEMINI_API_KEY=your-gemini-key
+GEMINI_MODEL=gemini-2.0-flash
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+OPENAI_ENABLED=false
 GITHUB_TOKEN=ghp_...
 GITHUB_USERNAME=tuousername
 REPLIT_API_KEY=
@@ -120,7 +125,17 @@ npm run dev
 | **Marketing Agent** | Contenuti, campagne, crescita |
 | **Research Agent** | Ricerca, analisi dati, report |
 
-Gli agenti utilizzano Claude o OpenAI quando configurati, con fallback a risposte placeholder.
+Gli agenti utilizzano il **AI Provider Manager** con Gemini come provider predefinito. Claude è supportato come alternativa; OpenAI è opzionale e disattivato di default (`OPENAI_ENABLED=false`).
+
+### AI Provider Manager
+
+| Provider | Default | Stato |
+|----------|---------|-------|
+| **Google Gemini** | Sì | Provider principale |
+| **Claude** | No | Supportato |
+| **OpenAI** | No | Opzionale, disattivato di default |
+
+Il provider attivo è salvato in MongoDB (`AiSettings`) e selezionabile da Impostazioni o via API.
 
 ### Memoria persistente
 
@@ -149,15 +164,19 @@ Tutti i dati sono salvati su MongoDB:
 | GET/POST | `/api/agents` | Lista agenti e sessioni |
 | POST | `/api/agents/sessions/:id/message` | Invia messaggio ad agente |
 | GET | `/api/integrations/status` | Stato integrazioni |
+| GET | `/api/ai/providers` | Lista provider AI e provider attivo |
+| POST | `/api/ai/provider` | Imposta provider attivo (`gemini`, `claude`, `openai`) |
+| POST | `/api/ai/chat` | Chat tramite provider attivo o specificato |
+| CRUD | `/api/memory` | Memoria permanente |
 
 ## Integrazioni
 
-L'architettura è predisposta per:
-
 | Integrazione | File | Stato |
 |--------------|------|-------|
+| Google Gemini | `server/src/services/integrations/gemini.js` | **Default** |
+| AI Provider Manager | `server/src/services/ai/aiProviderManager.js` | Pronto |
 | Claude (Anthropic) | `server/src/services/integrations/claude.js` | Pronto |
-| OpenAI | `server/src/services/integrations/openai.js` | Pronto |
+| OpenAI | `server/src/services/integrations/openai.js` | Opzionale (`OPENAI_ENABLED`) |
 | GitHub | `server/src/services/integrations/github.js` | Pronto |
 | Replit | `server/src/services/integrations/replit.js` | Scaffold |
 | Controllo vocale | `server/src/services/integrations/voice.js` | Scaffold |

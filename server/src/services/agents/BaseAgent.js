@@ -1,5 +1,4 @@
-import { claudeService } from '../integrations/claude.js';
-import { openaiService } from '../integrations/openai.js';
+import { chat, getPlaceholderMessage } from '../ai/aiProviderManager.js';
 
 export class BaseAgent {
   constructor(type, systemPrompt) {
@@ -16,18 +15,13 @@ export class BaseAgent {
       .filter((m) => m.role !== 'system')
       .map((m) => ({ role: m.role, content: m.content }));
 
-    if (claudeService.isConfigured()) {
-      return claudeService.chat(conversationHistory, this.systemPrompt);
+    try {
+      const response = await chat(conversationHistory, this.systemPrompt);
+      if (response) return response;
+    } catch (error) {
+      console.error(`AI Provider error (${this.type}):`, error.message);
     }
 
-    if (openaiService.isConfigured()) {
-      return openaiService.chat(conversationHistory, this.systemPrompt);
-    }
-
-    return this.getPlaceholderResponse(message);
-  }
-
-  getPlaceholderResponse(message) {
-    return `[${this.type} Agent] Ho ricevuto il tuo messaggio: "${message}". Configura ANTHROPIC_API_KEY o OPENAI_API_KEY per attivare le risposte AI reali.`;
+    return getPlaceholderMessage(this.type, message);
   }
 }

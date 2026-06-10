@@ -34,6 +34,13 @@
   color: var(--text-secondary);
 }
 
+.system-ai-provider {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
 .integration-list {
   display: flex;
   flex-direction: column;
