@@ -68,4 +68,20 @@ export const api = {
   integrations: {
     status: () => request('/integrations/status'),
   },
+  memory: {
+    list: (params = '') => request(`/memory${params}`),
+    stats: () => request('/memory/stats'),
+    search: (q, type) => {
+      const params = new URLSearchParams({ q });
+      if (type) params.set('type', type);
+      return request(`/memory/search?${params}`);
+    },
+    context: (params = '') => request(`/memory/context${params}`),
+    get: (id) => request(`/memory/${id}`),
+    create: (body) => request('/memory', { method: 'POST', body: JSON.stringify(body) }),
+    update: (id, body) => request(`/memory/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+    delete: (id) => request(`/memory/${id}`, { method: 'DELETE' }),
+    access: (id) => request(`/memory/${id}/access`, { method: 'POST' }),
+    sync: () => request('/memory/sync', { method: 'POST' }),
+  },
 };

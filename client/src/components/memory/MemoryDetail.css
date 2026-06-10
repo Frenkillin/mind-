@@ -1,0 +1,114 @@
+.memory-detail {
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.memory-detail-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: var(--text-muted);
+}
+
+.memory-detail-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.memory-detail-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.memory-detail h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.memory-detail-summary,
+.memory-detail-content {
+  margin-bottom: 1rem;
+}
+
+.memory-detail-summary strong,
+.memory-detail-content strong {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.memory-detail-summary p,
+.memory-detail-content p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+.memory-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.memory-detail-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+}
+
+.memory-detail-meta span {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.memory-detail-meta strong {
+  font-size: 0.85rem;
+}
+
+.memory-detail-refs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 0.6rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+}
+
+.memory-detail-payload {
+  font-size: 0.8rem;
+}
+
+.memory-detail-payload summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.memory-detail-payload pre {
+  background: var(--bg-input);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

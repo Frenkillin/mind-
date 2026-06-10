@@ -1,0 +1,24 @@
+.memory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.memory-list-empty {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  color: var(--text-muted);
+}
+
+.memory-list-empty p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.memory-list-empty span {
+  font-size: 0.8rem;
+}

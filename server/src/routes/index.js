@@ -8,6 +8,7 @@ import activityRoutes from './activities.js';
 import agentRoutes from './agents.js';
 import dashboardRoutes from './dashboard.js';
 import integrationRoutes from './integrations.js';
+import memoryRoutes from './memory.js';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/notes', noteRoutes);
 router.use('/activities', activityRoutes);
 router.use('/agents', agentRoutes);
 router.use('/integrations', integrationRoutes);
+router.use('/memory', memoryRoutes);
 
 export default router;

@@ -1,5 +1,6 @@
 import Project from '../models/Project.js';
 import { logActivity } from '../utils/activityLogger.js';
+import { syncFromProject } from '../services/memory/memorySyncService.js';
 
 export async function getProjects(_req, res) {
   const projects = await Project.find().sort({ updatedAt: -1 });
@@ -22,6 +23,7 @@ export async function createProject(req, res) {
     entityType: 'Project',
     entityId: project._id,
   });
+  await syncFromProject(project).catch(() => {});
   res.status(201).json({ success: true, data: project });
 }
 
@@ -39,6 +41,7 @@ export async function updateProject(req, res) {
     entityType: 'Project',
     entityId: project._id,
   });
+  await syncFromProject(project).catch(() => {});
   res.json({ success: true, data: project });
 }
 

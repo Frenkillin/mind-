@@ -13,8 +13,8 @@ export const MIND_MODULES = [
   },
   {
     id: 'memory',
-    name: 'Memoria persistente',
-    description: 'Cronologia, contesto e dati persistenti',
+    name: 'Memoria permanente',
+    description: 'Archivio semantico unificato per AI e MCP',
     status: 'active',
     route: '/memory',
     icon: 'brain',

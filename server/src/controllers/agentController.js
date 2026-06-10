@@ -1,6 +1,7 @@
 import AgentSession from '../models/AgentSession.js';
 import { AgentFactory } from '../services/agents/AgentFactory.js';
 import { logActivity } from '../utils/activityLogger.js';
+import { syncFromSession } from '../services/memory/memorySyncService.js';
 
 const AGENT_INFO = {
   business: {
@@ -87,6 +88,11 @@ export async function sendMessage(req, res) {
     description: message.substring(0, 100),
     metadata: { agentType: session.agentType, sessionId: session._id },
   });
+
+  const userMessageCount = session.messages.filter((m) => m.role === 'user').length;
+  if (userMessageCount % 3 === 0) {
+    await syncFromSession(session).catch(() => {});
+  }
 
   res.json({
     success: true,

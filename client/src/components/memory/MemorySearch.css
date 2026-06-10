@@ -1,0 +1,38 @@
+.memory-search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+}
+
+.memory-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.memory-search-input:focus {
+  outline: none;
+}
+
+.memory-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.memory-search-clear {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+}
+
+.memory-search-clear:hover {
+  color: var(--text-primary);
+}

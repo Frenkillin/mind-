@@ -1,5 +1,6 @@
 import Idea from '../models/Idea.js';
 import { logActivity } from '../utils/activityLogger.js';
+import { syncFromIdea } from '../services/memory/memorySyncService.js';
 
 export async function getIdeas(req, res) {
   const filter = {};
@@ -18,6 +19,7 @@ export async function createIdea(req, res) {
     entityType: 'Idea',
     entityId: idea._id,
   });
+  await syncFromIdea(idea).catch(() => {});
   res.status(201).json({ success: true, data: idea });
 }
 
@@ -29,6 +31,7 @@ export async function updateIdea(req, res) {
   if (!idea) {
     return res.status(404).json({ success: false, error: 'Idea non trovata' });
   }
+  await syncFromIdea(idea).catch(() => {});
   res.json({ success: true, data: idea });
 }
 

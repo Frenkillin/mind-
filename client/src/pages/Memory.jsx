@@ -1,119 +1,150 @@
-import { useState, useEffect } from 'react';
-import { Clock, FolderKanban, Lightbulb, CheckSquare } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
+import MemoryHeader from '../components/memory/MemoryHeader';
+import MemoryStats from '../components/memory/MemoryStats';
+import MemoryTabs from '../components/memory/MemoryTabs';
+import MemorySearch from '../components/memory/MemorySearch';
+import MemoryList from '../components/memory/MemoryList';
+import MemoryDetail from '../components/memory/MemoryDetail';
+import MemoryForm from '../components/memory/MemoryForm';
 import '../styles/shared.css';
 import './Memory.css';
 
-const typeConfig = {
-  project_created: { icon: FolderKanban, label: 'Progetto' },
-  project_updated: { icon: FolderKanban, label: 'Progetto' },
-  idea_saved: { icon: Lightbulb, label: 'Idea' },
-  task_completed: { icon: CheckSquare, label: 'Attività' },
-  task_created: { icon: CheckSquare, label: 'Attività' },
-  goal_updated: { icon: Clock, label: 'Obiettivo' },
-  note_created: { icon: Clock, label: 'Nota' },
-  agent_interaction: { icon: Clock, label: 'Agente' },
-  integration_used: { icon: Clock, label: 'Integrazione' },
-};
-
 export default function Memory() {
-  const [activities, setActivities] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [ideas, setIdeas] = useState([]);
+  const [memories, setMemories] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState('history');
+  const [syncing, setSyncing] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingMemory, setEditingMemory] = useState(null);
+
+  const loadMemories = useCallback(async () => {
+    try {
+      const params = new URLSearchParams();
+      if (activeTab !== 'all') params.set('type', activeTab);
+      params.set('limit', '50');
+
+      const [listRes, statsRes] = await Promise.all([
+        searchQuery
+          ? api.memory.search(searchQuery, activeTab !== 'all' ? activeTab : undefined)
+          : api.memory.list(params.toString() ? `?${params}` : ''),
+        api.memory.stats(),
+      ]);
+
+      const items = listRes.data.items || listRes.data;
+      setMemories(items);
+      setStats(statsRes.data);
+      setSelected((prev) => {
+        if (!prev) return null;
+        return items.find((m) => m._id === prev._id) || null;
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, searchQuery]);
 
   useEffect(() => {
-    Promise.all([
-      api.activities.list(100),
-      api.projects.list(),
-      api.ideas.list(),
-    ])
-      .then(([actRes, projRes, ideaRes]) => {
-        setActivities(actRes.data);
-        setProjects(projRes.data);
-        setIdeas(ideaRes.data);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+    loadMemories();
+  }, [loadMemories]);
 
-  if (loading) return <div className="loading"><div className="spinner" /></div>;
+  async function handleSelect(memory) {
+    setSelected(memory);
+    try {
+      await api.memory.access(memory._id);
+    } catch {
+      // non-blocking
+    }
+  }
+
+  async function handleSync() {
+    setSyncing(true);
+    try {
+      await api.memory.sync();
+      await loadMemories();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  async function handleSave(data, id) {
+    if (id) {
+      await api.memory.update(id, data);
+    } else {
+      await api.memory.create(data);
+    }
+    await loadMemories();
+  }
+
+  async function handleDelete(memory) {
+    if (!confirm(`Eliminare la memoria "${memory.title}"?`)) return;
+    await api.memory.delete(memory._id);
+    setSelected(null);
+    await loadMemories();
+  }
+
+  async function handleTogglePin(memory) {
+    await api.memory.update(memory._id, { pinned: !memory.pinned });
+    await loadMemories();
+  }
+
+  function handleSearchSubmit(e) {
+    e.preventDefault();
+    loadMemories();
+  }
+
+  if (loading) {
+    return <div className="loading"><div className="spinner" /></div>;
+  }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1>Memoria</h1>
-        <p>Cronologia persistente di progetti, idee e attività</p>
+    <div className="page memory-page">
+      <MemoryHeader
+        onCreate={() => { setEditingMemory(null); setFormOpen(true); }}
+        onSync={handleSync}
+        syncing={syncing}
+      />
+
+      <MemoryStats stats={stats} />
+
+      <MemorySearch
+        query={searchQuery}
+        onChange={setSearchQuery}
+        onSubmit={handleSearchSubmit}
+      />
+
+      <MemoryTabs
+        active={activeTab}
+        onChange={(tab) => { setActiveTab(tab); setSelected(null); }}
+        counts={stats?.byType}
+      />
+
+      <div className="memory-layout">
+        <MemoryList
+          memories={memories}
+          selectedId={selected?._id}
+          onSelect={handleSelect}
+        />
+        <MemoryDetail
+          memory={selected}
+          onEdit={(m) => { setEditingMemory(m); setFormOpen(true); }}
+          onDelete={handleDelete}
+          onTogglePin={handleTogglePin}
+        />
       </div>
 
-      <div className="memory-tabs">
-        <button className={`memory-tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>
-          Cronologia
-        </button>
-        <button className={`memory-tab ${tab === 'projects' ? 'active' : ''}`} onClick={() => setTab('projects')}>
-          Progetti ({projects.length})
-        </button>
-        <button className={`memory-tab ${tab === 'ideas' ? 'active' : ''}`} onClick={() => setTab('ideas')}>
-          Idee ({ideas.length})
-        </button>
-      </div>
-
-      {tab === 'history' && (
-        <div className="memory-timeline">
-          {activities.length === 0 ? (
-            <div className="empty-state card">Nessuna attività registrata.</div>
-          ) : (
-            activities.map((activity) => {
-              const config = typeConfig[activity.type] || { icon: Clock, label: 'Evento' };
-              const Icon = config.icon;
-              return (
-                <div key={activity._id} className="timeline-item">
-                  <div className="timeline-dot">
-                    <Icon size={14} />
-                  </div>
-                  <div className="timeline-content card">
-                    <div className="timeline-header">
-                      <span className="badge badge-blue">{config.label}</span>
-                      <span className="timeline-date">
-                        {new Date(activity.createdAt).toLocaleString('it-IT')}
-                      </span>
-                    </div>
-                    <h4>{activity.title}</h4>
-                    {activity.description && <p>{activity.description}</p>}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
-
-      {tab === 'projects' && (
-        <div className="memory-grid">
-          {projects.map((p) => (
-            <div key={p._id} className="card memory-item">
-              <h4>{p.title}</h4>
-              <p>{p.description || 'Nessuna descrizione'}</p>
-              <span className="memory-date">
-                Creato: {new Date(p.createdAt).toLocaleDateString('it-IT')}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {tab === 'ideas' && (
-        <div className="memory-grid">
-          {ideas.map((idea) => (
-            <div key={idea._id} className="card memory-item">
-              <h4>{idea.title}</h4>
-              <p>{idea.content || 'Nessun contenuto'}</p>
-              <span className="badge badge-cyan">{idea.category}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <MemoryForm
+        open={formOpen}
+        memory={editingMemory}
+        onClose={() => { setFormOpen(false); setEditingMemory(null); }}
+        onSave={handleSave}
+      />
     </div>
   );
 }
