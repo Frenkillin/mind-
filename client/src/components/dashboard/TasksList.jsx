@@ -11,7 +11,8 @@ const priorityColors = {
 export default function TasksList({ tasks = [], onUpdate }) {
   async function toggleTask(task) {
     try {
-      await api.tasks.update(task._id, { completed: !task.completed });
+      const newStatus = task.status === 'done' || task.completed ? 'todo' : 'done';
+      await api.tasks.update(task._id, { status: newStatus });
       onUpdate?.();
     } catch (error) {
       console.error(error);
@@ -27,14 +28,14 @@ export default function TasksList({ tasks = [], onUpdate }) {
       ) : (
         <div className="task-list">
           {tasks.map((task) => (
-            <div key={task._id} className={`task-item ${task.completed ? 'completed' : ''}`}>
+            <div key={task._id} className={`task-item ${task.status === 'done' || task.completed ? 'completed' : ''}`}>
               <button className="task-check" onClick={() => toggleTask(task)}>
-                {task.completed ? <Check size={16} /> : <Circle size={16} />}
+                {task.status === 'done' || task.completed ? <Check size={16} /> : <Circle size={16} />}
               </button>
               <div className="task-content">
                 <span className="task-title">{task.title}</span>
-                {task.projectId?.title && (
-                  <span className="task-project">{task.projectId.title}</span>
+                {(task.projectId?.name || task.projectId?.title) && (
+                  <span className="task-project">{task.projectId.name || task.projectId.title}</span>
                 )}
               </div>
               <span className={`badge ${priorityColors[task.priority] || 'badge-blue'}`}>

@@ -23,7 +23,7 @@ export const api = {
     get: () => request('/dashboard'),
   },
   projects: {
-    list: () => request('/projects'),
+    list: (params = '') => request(`/projects${params}`),
     get: (id) => request(`/projects/${id}`),
     create: (body) => request('/projects', { method: 'POST', body: JSON.stringify(body) }),
     update: (id, body) => request(`/projects/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
@@ -31,9 +31,11 @@ export const api = {
   },
   tasks: {
     list: (params = '') => request(`/tasks${params}`),
+    get: (id) => request(`/tasks/${id}`),
     create: (body) => request('/tasks', { method: 'POST', body: JSON.stringify(body) }),
     update: (id, body) => request(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     delete: (id) => request(`/tasks/${id}`, { method: 'DELETE' }),
+    assist: (id) => request(`/tasks/${id}/assist`, { method: 'POST' }),
   },
   goals: {
     list: (params = '') => request(`/goals${params}`),
@@ -57,7 +59,12 @@ export const api = {
     list: (limit = 50) => request(`/activities?limit=${limit}`),
   },
   agents: {
-    list: () => request('/agents'),
+    list: (params = '') => request(`/agents${params}`),
+    get: (id) => request(`/agents/${id}`),
+    create: (body) => request('/agents', { method: 'POST', body: JSON.stringify(body) }),
+    update: (id, body) => request(`/agents/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+    delete: (id) => request(`/agents/${id}`, { method: 'DELETE' }),
+    scaffold: (id) => request(`/agents/${id}/scaffold`),
     sessions: (agentType) => request(`/agents/sessions${agentType ? `?agentType=${agentType}` : ''}`),
     getSession: (id) => request(`/agents/sessions/${id}`),
     createSession: (body) => request('/agents/sessions', { method: 'POST', body: JSON.stringify(body) }),

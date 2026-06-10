@@ -19,6 +19,10 @@ export function buildListFilter(query = {}) {
     filter.source = query.source;
   }
 
+  if (query.projectId) {
+    filter.projectId = query.projectId;
+  }
+
   if (query.minImportance) {
     filter.importance = { $gte: parseInt(query.minImportance, 10) };
   }

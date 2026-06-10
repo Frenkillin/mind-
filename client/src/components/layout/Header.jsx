@@ -5,8 +5,10 @@ import './Header.css';
 const pageTitles = {
   '/': 'Dashboard',
   '/projects': 'Progetti',
+  '/tasks': 'Task',
   '/ideas': 'Idee',
-  '/agents': 'Agenti AI',
+  '/agents': 'Agenti',
+  '/chat': 'Chat AI',
   '/memory': 'Memoria',
   '/settings': 'Impostazioni',
 };

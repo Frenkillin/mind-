@@ -6,6 +6,7 @@ import { connectDatabase } from './config/database.js';
 import routes from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { ensureAiSettings } from './services/ai/aiProviderManager.js';
+import { seedDefaultAgents } from './services/agents/agentSeedService.js';
 
 const app = express();
 
@@ -23,7 +24,9 @@ app.use(errorHandler);
 
 await connectDatabase();
 await ensureAiSettings();
+const agentSeed = await seedDefaultAgents();
 console.log('✓ AI Provider Manager inizializzato (default: Gemini)');
+if (agentSeed.seeded) console.log(`✓ ${agentSeed.count} agenti AI seed creati`);
 
 app.listen(env.port, () => {
   console.log(`✓ MIND API in ascolto su http://localhost:${env.port}`);

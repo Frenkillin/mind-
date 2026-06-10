@@ -2,8 +2,10 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   FolderKanban,
+  CheckSquare,
   Lightbulb,
   Bot,
+  MessageSquare,
   Brain,
   Settings,
 } from 'lucide-react';
@@ -12,8 +14,10 @@ import './Sidebar.css';
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/projects', icon: FolderKanban, label: 'Progetti' },
+  { to: '/tasks', icon: CheckSquare, label: 'Task' },
   { to: '/ideas', icon: Lightbulb, label: 'Idee' },
-  { to: '/agents', icon: Bot, label: 'Agenti AI' },
+  { to: '/agents', icon: Bot, label: 'Agenti' },
+  { to: '/chat', icon: MessageSquare, label: 'Chat AI' },
   { to: '/memory', icon: Brain, label: 'Memoria' },
   { to: '/settings', icon: Settings, label: 'Impostazioni' },
 ];

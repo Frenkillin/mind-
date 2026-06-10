@@ -15,7 +15,8 @@ MIND è un sistema modulare che combina:
 
 - **Dashboard intelligente** — panoramica progetti, attività, obiettivi e note rapide
 - **Memoria persistente** — salvataggio progetti, idee e cronologia attività su MongoDB
-- **Sistema agenti AI** — Business, Development, Marketing e Research Agent
+- **Centro operativo** — progetti, task kanban, agenti AI e monitoraggio avanzamento
+- **Sistema agenti AI** — registro agenti con provider Gemini/Claude/OpenAI
 - **Provider AI multi-modello** — Google Gemini (default), Claude, OpenAI (opzionale)
 - **Integrazioni pronte** — GitHub, Replit, controllo vocale e MCP
 
@@ -161,8 +162,12 @@ Tutti i dati sono salvati su MongoDB:
 | CRUD | `/api/goals` | Gestione obiettivi |
 | CRUD | `/api/notes` | Gestione note |
 | GET | `/api/activities` | Cronologia attività |
-| GET/POST | `/api/agents` | Lista agenti e sessioni |
-| POST | `/api/agents/sessions/:id/message` | Invia messaggio ad agente |
+| CRUD | `/api/projects` | Gestione progetti (ricerca, filtri, dettaglio con memorie) |
+| CRUD | `/api/tasks` | Gestione task kanban (todo/doing/review/done) |
+| CRUD | `/api/agents` | Registro agenti AI |
+| POST | `/api/tasks/:id/assist` | Assistenza AI su task (scaffold) |
+| GET | `/api/agents/:id/scaffold` | Struttura esecuzione autonoma agente |
+| POST | `/api/agents/sessions/:id/message` | Invia messaggio chat agente |
 | GET | `/api/integrations/status` | Stato integrazioni |
 | GET | `/api/ai/providers` | Lista provider AI e provider attivo |
 | POST | `/api/ai/provider` | Imposta provider attivo (`gemini`, `claude`, `openai`) |

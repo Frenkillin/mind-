@@ -1,40 +1,15 @@
 import AgentSession from '../models/AgentSession.js';
+import Agent from '../models/Agent.js';
 import { AgentFactory } from '../services/agents/AgentFactory.js';
 import { logActivity } from '../utils/activityLogger.js';
 import { syncFromSession } from '../services/memory/memorySyncService.js';
 
-const AGENT_INFO = {
-  business: {
-    name: 'Business Agent',
-    description: 'Strategia, pianificazione e analisi di business',
-    icon: 'briefcase',
-    color: '#3b82f6',
-  },
-  development: {
-    name: 'Development Agent',
-    description: 'Architettura software, codice e debugging',
-    icon: 'code',
-    color: '#06b6d4',
-  },
-  marketing: {
-    name: 'Marketing Agent',
-    description: 'Contenuti, campagne e crescita',
-    icon: 'megaphone',
-    color: '#8b5cf6',
-  },
-  research: {
-    name: 'Research Agent',
-    description: 'Ricerca, analisi dati e approfondimenti',
-    icon: 'search',
-    color: '#10b981',
-  },
-};
-
-export async function getAgents(_req, res) {
-  res.json({
-    success: true,
-    data: Object.entries(AGENT_INFO).map(([type, info]) => ({ type, ...info })),
-  });
+async function resolveAgentType({ agentType, agentId }) {
+  if (agentId) {
+    const agent = await Agent.findById(agentId);
+    if (agent?.slug) return agent.slug;
+  }
+  return agentType || 'business';
 }
 
 export async function getSessions(req, res) {
@@ -54,13 +29,19 @@ export async function getSession(req, res) {
 }
 
 export async function createSession(req, res) {
-  const { agentType, title } = req.body;
-  const agent = AgentFactory.create(agentType);
+  const { agentType, agentId, title } = req.body;
+  const resolvedType = await resolveAgentType({ agentType, agentId });
+  const dbAgent = agentId
+    ? await Agent.findById(agentId)
+    : await Agent.findOne({ slug: resolvedType });
+
+  const agent = AgentFactory.create(resolvedType);
 
   const session = await AgentSession.create({
-    agentType,
-    title: title || `Conversazione ${AGENT_INFO[agentType]?.name || agentType}`,
+    agentType: resolvedType,
+    title: title || `Conversazione ${dbAgent?.name || resolvedType}`,
     messages: [{ role: 'system', content: agent.getSystemPrompt() }],
+    context: { agentId: dbAgent?._id },
   });
 
   res.status(201).json({ success: true, data: session });
@@ -82,9 +63,11 @@ export async function sendMessage(req, res) {
   session.messages.push({ role: 'assistant', content: response });
   await session.save();
 
+  const dbAgent = await Agent.findOne({ slug: session.agentType });
+
   await logActivity({
     type: 'agent_interaction',
-    title: `Interazione con ${AGENT_INFO[session.agentType]?.name}`,
+    title: `Interazione con ${dbAgent?.name || session.agentType}`,
     description: message.substring(0, 100),
     metadata: { agentType: session.agentType, sessionId: session._id },
   });

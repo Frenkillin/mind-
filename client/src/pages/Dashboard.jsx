@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 import ControlCenterHeader from '../components/dashboard/ControlCenterHeader';
+import OperationalCenter from '../components/dashboard/OperationalCenter';
 import StatsBar from '../components/dashboard/StatsBar';
 import QuickActions from '../components/dashboard/QuickActions';
 import ModuleGrid from '../components/dashboard/ModuleGrid';
@@ -73,6 +74,8 @@ export default function Dashboard() {
         onRefresh={() => loadDashboard(true)}
         refreshing={refreshing}
       />
+
+      <OperationalCenter operational={data.operational} />
 
       <StatsBar stats={data.stats} />
 
