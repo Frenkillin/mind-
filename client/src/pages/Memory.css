@@ -1,0 +1,21 @@
+.memory-page {
+  max-width: 1400px;
+}
+
+.memory-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .memory-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .memory-detail {
+    position: static;
+    max-height: none;
+  }
+}

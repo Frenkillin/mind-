@@ -1,0 +1,43 @@
+.memory-type-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.memory-type-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.memory-type-tab:hover {
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+.memory-type-tab.active {
+  color: var(--accent-light);
+  background: var(--accent-glow);
+  border-color: var(--accent);
+}
+
+.memory-tab-count {
+  font-size: 0.7rem;
+  background: var(--bg-card);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+
+.memory-type-tab.active .memory-tab-count {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--accent-light);
+}

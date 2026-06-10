@@ -1,0 +1,123 @@
+.module-grid-card {
+  margin-bottom: 0;
+}
+
+.module-grid-title {
+  justify-content: space-between;
+}
+
+.module-grid-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+
+.module-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.module-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.module-link:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.module-disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.module-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.module-icon-active {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+}
+
+.module-icon-scaffold {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent-light);
+}
+
+.module-icon-planned {
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--text-muted);
+}
+
+.module-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.module-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.module-desc {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-top: 0.1rem;
+}
+
+.module-status {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.module-active {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+}
+
+.module-scaffold {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent-light);
+}
+
+.module-planned {
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+}

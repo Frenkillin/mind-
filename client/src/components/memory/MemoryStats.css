@@ -1,0 +1,68 @@
+.memory-stats-bar {
+  display: grid;
+  grid-template-columns: 120px repeat(5, 1fr) 140px;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.memory-stat-total,
+.memory-stat-item,
+.memory-stat-meta {
+  padding: 0.85rem 1rem;
+  text-align: center;
+}
+
+.memory-stat-total {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.memory-stat-item {
+  border-left: 3px solid var(--type-color, var(--border));
+}
+
+.memory-stat-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.memory-stat-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.memory-stat-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 1100px) {
+  .memory-stats-bar {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .memory-stat-total {
+    grid-column: span 2;
+  }
+
+  .memory-stat-meta {
+    grid-column: span 2;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+
+@media (max-width: 600px) {
+  .memory-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .memory-stat-total,
+  .memory-stat-meta {
+    grid-column: span 2;
+  }
+}

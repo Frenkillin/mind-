@@ -1,0 +1,96 @@
+.urgent-tasks .card-title {
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.urgent-link {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.urgent-empty {
+  padding: 1.5rem;
+  color: var(--success);
+}
+
+.urgent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.urgent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+}
+
+.urgent-item.overdue {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.urgent-item:hover {
+  border-color: var(--border-light);
+}
+
+.urgent-check {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-light);
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.urgent-check:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.urgent-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.urgent-title {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.urgent-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.urgent-project {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.urgent-due {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--warning);
+}
+
+.overdue .urgent-due {
+  color: var(--danger);
+}

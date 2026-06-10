@@ -1,0 +1,52 @@
+.recent-ideas .card-title {
+  gap: 0.5rem;
+}
+
+.ideas-link {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.ideas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.idea-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.idea-star {
+  color: var(--warning);
+  flex-shrink: 0;
+}
+
+.idea-row-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.idea-row-title {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
