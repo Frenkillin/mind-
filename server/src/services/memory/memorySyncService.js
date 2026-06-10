@@ -59,12 +59,13 @@ export async function syncFromProject(project) {
     return Memory.findByIdAndUpdate(
       existing._id,
       {
-        title: project.title,
+        title: project.name,
         content,
         summary: project.description?.substring(0, 200) || '',
         tags: project.tags || [],
         importance: project.priority === 'critical' ? 9 : project.priority === 'high' ? 7 : 5,
         source: 'sync',
+        projectId: project._id,
         payload,
       },
       { new: true }
@@ -73,7 +74,7 @@ export async function syncFromProject(project) {
 
   return Memory.create({
     type: 'project',
-    title: project.title,
+    title: project.name,
     content,
     summary: project.description?.substring(0, 200) || '',
     tags: project.tags || [],
@@ -81,6 +82,7 @@ export async function syncFromProject(project) {
     source: 'sync',
     provider: 'mind',
     refs: { entityType: 'Project', entityId: project._id },
+    projectId: project._id,
     payload,
   });
 }

@@ -3,11 +3,11 @@ import { ArrowRight } from 'lucide-react';
 import './ProjectsOverview.css';
 
 const statusLabels = {
+  idea: 'Idea',
   planning: 'Pianificazione',
-  active: 'Attivo',
-  paused: 'In pausa',
+  development: 'Sviluppo',
+  testing: 'Testing',
   completed: 'Completato',
-  archived: 'Archiviato',
 };
 
 const priorityLabels = {
@@ -43,7 +43,7 @@ export default function ProjectsOverview({ projects = [] }) {
             >
               <div className="project-board-header">
                 <span className="project-board-dot" />
-                <span className="project-board-title">{project.title}</span>
+                <span className="project-board-title">{project.name || project.title}</span>
               </div>
               {project.description && (
                 <p className="project-board-desc">{project.description}</p>

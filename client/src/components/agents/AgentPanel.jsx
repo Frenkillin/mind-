@@ -19,7 +19,10 @@ export default function AgentPanel({ agent }) {
 
   async function startSession() {
     try {
-      const res = await api.agents.createSession({ agentType: agent.type });
+      const res = await api.agents.createSession({
+        agentType: agent.type,
+        agentId: agent._id,
+      });
       setSession(res.data);
     } catch (err) {
       console.error(err);

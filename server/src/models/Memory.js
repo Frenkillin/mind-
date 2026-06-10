@@ -37,6 +37,7 @@ const memorySchema = new mongoose.Schema(
       default: 'mind',
     },
     pinned: { type: Boolean, default: false },
+    projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', index: true },
     refs: { type: refsSchema, default: () => ({}) },
     payload: { type: mongoose.Schema.Types.Mixed, default: {} },
     embedding: { type: [Number], default: [] },
@@ -50,6 +51,7 @@ const memorySchema = new mongoose.Schema(
 memorySchema.index({ type: 1, createdAt: -1 });
 memorySchema.index({ tags: 1 });
 memorySchema.index({ pinned: -1, importance: -1 });
+memorySchema.index({ projectId: 1, updatedAt: -1 });
 memorySchema.index({ 'refs.entityId': 1, 'refs.entityType': 1 });
 memorySchema.index({ title: 'text', content: 'text', summary: 'text' });
 

@@ -13,9 +13,12 @@ import { openaiService } from './integrations/openai.js';
 import { getAiStatus } from './ai/aiProviderManager.js';
 import { githubService } from './integrations/github.js';
 import { replitService } from './integrations/replit.js';
+import { getOperationalStats } from './operationalCenterService.js';
 import { env } from '../config/env.js';
 
 const PRIORITY_ORDER = { urgent: 4, high: 3, medium: 2, low: 1 };
+
+const ACTIVE_PROJECT_STATUSES = ['idea', 'planning', 'development', 'testing'];
 
 function sortByPriority(tasks) {
   return [...tasks].sort((a, b) => {
@@ -52,28 +55,29 @@ export async function buildDashboardPayload() {
     starredIdeasCount,
     recentSessionsCount,
     activitiesTodayCount,
+    operational,
   ] = await Promise.all([
-    Project.find({ status: { $in: ['planning', 'active'] } })
+    Project.find({ status: { $in: ACTIVE_PROJECT_STATUSES } })
       .sort({ updatedAt: -1 })
       .limit(6)
       .lean(),
-    Project.find({ status: { $in: ['planning', 'active', 'paused'] } })
+    Project.find({ status: { $ne: 'completed' } })
       .sort({ priority: -1, updatedAt: -1 })
       .limit(12)
       .lean(),
-    Task.find({ completed: false })
+    Task.find({ status: { $ne: 'done' } })
       .sort({ createdAt: -1 })
       .limit(20)
-      .populate('projectId', 'title color')
+      .populate('projectId', 'name color')
       .lean(),
     Task.find({
-      completed: false,
+      status: { $ne: 'done' },
       $or: [
         { priority: { $in: ['urgent', 'high'] } },
         { dueDate: { $lte: now } },
       ],
     })
-      .populate('projectId', 'title color')
+      .populate('projectId', 'name color')
       .lean(),
     Goal.find({ completed: false })
       .sort({ targetDate: 1 })
@@ -91,16 +95,17 @@ export async function buildDashboardPayload() {
       .sort({ createdAt: -1 })
       .limit(20)
       .lean(),
-    Project.countDocuments({ status: 'active' }),
+    Project.countDocuments({ status: { $in: ['development', 'testing'] } }),
     Project.countDocuments(),
-    Task.countDocuments({ completed: false }),
-    Task.countDocuments({ completed: false, dueDate: { $lt: now } }),
-    Task.countDocuments({ completed: true, updatedAt: { $gte: startOfDay } }),
+    Task.countDocuments({ status: { $ne: 'done' } }),
+    Task.countDocuments({ status: { $ne: 'done' }, dueDate: { $lt: now } }),
+    Task.countDocuments({ status: 'done', updatedAt: { $gte: startOfDay } }),
     Goal.countDocuments({ completed: false }),
     Idea.countDocuments(),
     Idea.countDocuments({ starred: true }),
     AgentSession.countDocuments({ active: true }),
     Activity.countDocuments({ createdAt: { $gte: startOfDay } }),
+    getOperationalStats(),
   ]);
 
   const aiStatus = await getAiStatus();
@@ -115,8 +120,6 @@ export async function buildDashboardPayload() {
     database: mongoose.connection.readyState === 1,
   };
 
-  const aiReady = aiStatus.aiReady;
-
   return {
     meta: {
       generatedAt: now.toISOString(),
@@ -127,7 +130,7 @@ export async function buildDashboardPayload() {
       integrations,
       modules: MIND_MODULES,
       moduleStats: getModuleStats(),
-      aiReady,
+      aiReady: aiStatus.aiReady,
       activeAiProvider: aiStatus.activeProvider,
       defaultAiProvider: aiStatus.defaultProvider,
     },
@@ -143,6 +146,7 @@ export async function buildDashboardPayload() {
       activeChatSessions: recentSessionsCount,
       activitiesToday: activitiesTodayCount,
     },
+    operational,
     projects,
     projectBoard: allActiveProjects,
     pendingTasks: sortByPriority(pendingTasks).slice(0, 10),

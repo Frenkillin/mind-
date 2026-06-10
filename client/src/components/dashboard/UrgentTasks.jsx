@@ -13,7 +13,8 @@ const priorityLabels = {
 export default function UrgentTasks({ tasks = [], onUpdate }) {
   async function toggleTask(task) {
     try {
-      await api.tasks.update(task._id, { completed: !task.completed });
+      const newStatus = task.status === 'done' ? 'todo' : 'done';
+      await api.tasks.update(task._id, { status: newStatus });
       onUpdate?.();
     } catch (error) {
       console.error(error);
@@ -44,8 +45,8 @@ export default function UrgentTasks({ tasks = [], onUpdate }) {
               <div className="urgent-content">
                 <span className="urgent-title">{task.title}</span>
                 <div className="urgent-meta">
-                  {task.projectId?.title && (
-                    <span className="urgent-project">{task.projectId.title}</span>
+                  {(task.projectId?.name || task.projectId?.title) && (
+                    <span className="urgent-project">{task.projectId.name || task.projectId.title}</span>
                   )}
                   {task.dueDate && (
                     <span className="urgent-due">

@@ -4,9 +4,9 @@ import './QuickActions.css';
 
 const actions = [
   { to: '/projects', icon: FolderKanban, label: 'Nuovo progetto', hint: 'Gestione progetti' },
-  { to: '/projects', icon: CheckSquare, label: 'Aggiungi task', hint: 'Gestione task' },
+  { to: '/tasks', icon: CheckSquare, label: 'Aggiungi task', hint: 'Kanban task' },
   { to: '/ideas', icon: Lightbulb, label: 'Salva idea', hint: 'Memoria' },
-  { to: '/agents', icon: Bot, label: 'Chat AI', hint: 'Agenti' },
+  { to: '/chat', icon: Bot, label: 'Chat AI', hint: 'Conversazioni' },
   { to: '/', icon: StickyNote, label: 'Nota rapida', hint: 'Dashboard' },
 ];
 
