@@ -1,0 +1,2 @@
+# mind-
+automazione cervello
